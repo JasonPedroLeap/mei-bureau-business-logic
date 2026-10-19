@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Architecture - MEI Bureau Cloud</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <header class="topnav">
+      <a class="brand" href="index.html">
+        <div class="brand-mark">MEI</div>
+        <div>
+          <span>MEI Bureau Cloud</span>
+          <small>Architecture</small>
+        </div>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle>Menu</button>
+      <ul class="nav-links" data-nav-links>
+        <li><a href="index.html" aria-current="page">Architecture</a></li>
+      </ul>
+    </header>
+
+    <main>
+      <section class="section wrap" data-slide>
+        <p class="eyebrow">Technical solution</p>
+        <h1>Next.js + Node.js cloud architecture</h1>
+        <p class="lede">
+          One product, modular domains, API-first backend, cloud-ready database 
+          mapped 1:1 to the office ownership rules from the business logic pack.
+        </p>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">Stack</p>
+        <h2>Recommended technology choices</h2>
+        <div class="grid-3" style="margin-top: 20px">
+          <article class="panel stack-sm">
+            <span class="chip chip-teal">Frontend</span>
+            <h3>Next.js (App Router)</h3>
+            <p class="muted">Role-based UI, server components for lists/reports, client islands for POS / dense forms. TypeScript throughout.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip chip-teal">Backend</span>
+            <h3>Node.js API</h3>
+            <p class="muted">Dedicated NestJS or Fastify service (or Next Route Handlers early, extract when domains grow). Domain modules mirror office desks.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip chip-teal">Data</span>
+            <h3>PostgreSQL</h3>
+            <p class="muted">Replace Access MDBs. Prisma or Drizzle ORM. Multi-company via tenant / company id. Object storage for dossiers &amp; PDFs.</p>
+          </article>
+        </div>
+        <div class="grid-3" style="margin-top: 16px">
+          <article class="panel stack-sm">
+            <h3>Auth</h3>
+            <p class="muted">OIDC / Auth.js or Clerk/WorkOS. Company membership, role permissions per module (replacing CONFIG.MDB users).</p>
+          </article>
+          <article class="panel stack-sm">
+            <h3>Jobs &amp; reports</h3>
+            <p class="muted">Queue (BullMQ / SQS) for payroll import, budget sync, PDF generation. PDF engine replaces Crystal staging.</p>
+          </article>
+          <article class="panel stack-sm">
+            <h3>Hosting</h3>
+            <p class="muted">Vercel or container for Next; API + workers on containers (ECS/Cloud Run); managed Postgres; S3-compatible files.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">System view</p>
+        <h2>Logical architecture</h2>
+        <div class="arch-layers" style="margin-top: 20px">
+          <div class="layer">
+            <div class="layer-head">
+              <h3>Presentation - Next.js</h3>
+              <span class="chip">Web</span>
+            </div>
+            <p class="muted" style="margin: 0">
+              Apps shells: Bids - Project office - Change orders - Cost control - Billing - Yard &amp; counter - Admin.
+              Shared contract header on every job-scoped screen.
+            </p>
+          </div>
+          <div class="layer">
+            <div class="layer-head">
+              <h3>API gateway / BFF</h3>
+              <span class="chip">Node</span>
+            </div>
+            <p class="muted" style="margin: 0">
+              Auth session, company context, DTOs for UI. Aggregates read models (contract dashboard) without breaking write ownership.
+            </p>
+          </div>
+          <div class="layer">
+            <div class="layer-head">
+              <h3>Domain services</h3>
+              <span class="chip">Bounded contexts</span>
+            </div>
+            <p class="muted" style="margin: 0">
+              <code>bidding</code> - <code>contracts</code> - <code>change-orders</code> - <code>job-cost</code> - <code>billing</code> 
+              <code>inventory-pos</code> - <code>purchasing</code> - <code>ar-ap</code> - <code>notifications</code> - <code>documents</code>
+            </p>
+          </div>
+          <div class="layer">
+            <div class="layer-head">
+              <h3>Integration bus</h3>
+              <span class="chip">Events</span>
+            </div>
+            <p class="muted" style="margin: 0">
+              Domain events: <code>ContractAwarded</code>, <code>ExtraApproved</code>, <code>BudgetSyncRequested</code>,
+              <code>JobCostLinesPosted</code>, <code>InvoiceCreated</code>. Workers enforce hand-offs asynchronously when needed.
+            </p>
+          </div>
+          <div class="layer">
+            <div class="layer-head">
+              <h3>Persistence</h3>
+              <span class="chip">Postgres + files</span>
+            </div>
+            <p class="muted" style="margin: 0">
+              Relational tables replace JCPROJET / JCTRANS / FACTURATION / CR / CP / POS MDBs. Files for estimate dossiers &amp; generated PDFs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">Domain map</p>
+        <h2>Modules and legacy ownership</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>MEI domain</th>
+                <th>Replaces</th>
+                <th>Key aggregates</th>
+                <th>Writes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>bidding</strong></td>
+                <td>GProjet soumission</td>
+                <td>Bid, CompetitorPrice, EstimateFolder</td>
+                <td>Bids only</td>
+              </tr>
+              <tr>
+                <td><strong>contracts</strong></td>
+                <td>GProjet award + projet hub</td>
+                <td>Contract, Party, Phase</td>
+                <td>Award creates contract; others read</td>
+              </tr>
+              <tr>
+                <td><strong>project-office</strong></td>
+                <td>GProjet docs / dessins / strait</td>
+                <td>Document, Drawing, Subcontractor, Notice</td>
+                <td>Follow-up entities</td>
+              </tr>
+              <tr>
+                <td><strong>change-orders</strong></td>
+                <td>Extra6</td>
+                <td>Extra, ExtraFlag, Letter, Reminder</td>
+                <td>Extras + letter workflow</td>
+              </tr>
+              <tr>
+                <td><strong>job-cost</strong></td>
+                <td>JobCost6</td>
+                <td>Budget, CostTransaction, WipSnapshot</td>
+                <td>Costs, WIP, archive</td>
+              </tr>
+              <tr>
+                <td><strong>billing</strong></td>
+                <td>Facturation Progressive</td>
+                <td>ProgressInvoice, InvoiceLine</td>
+                <td>Invoice creation</td>
+              </tr>
+              <tr>
+                <td><strong>yard</strong></td>
+                <td>PVConst</td>
+                <td>Sale, PO, Receipt, StockItem, AR/AP docs</td>
+                <td>Ops; emits cost feed events</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">Data model</p>
+        <h2>From Access MDBs to Postgres</h2>
+        <div class="grid-2">
+          <div class="panel stack-sm">
+            <h3>Hub</h3>
+            <ul class="list-clean">
+              <li><code>companies</code> (ex CONFIG multi-cie)</li>
+              <li><code>contracts</code> (ex PROJET / NOITEM)</li>
+              <li><code>bids</code> (ex SOUMISSION)</li>
+              <li><code>users</code> + <code>memberships</code> + <code>permissions</code></li>
+            </ul>
+          </div>
+          <div class="panel stack-sm">
+            <h3>Money &amp; cost</h3>
+            <ul class="list-clean">
+              <li><code>budgets</code> (ex JCBUD)</li>
+              <li><code>cost_transactions</code> (ex JCJOB) + <code>cost_history</code></li>
+              <li><code>wip_snapshots</code> (ex JCPROF)</li>
+              <li><code>extras</code> + <code>progress_invoices</code></li>
+            </ul>
+          </div>
+          <div class="panel stack-sm">
+            <h3>Yard</h3>
+            <ul class="list-clean">
+              <li><code>items</code>, <code>stock_moves</code></li>
+              <li><code>purchase_orders</code>, <code>ap_invoices</code></li>
+              <li><code>pos_tickets</code>, <code>ar_invoices</code>, <code>receipts</code></li>
+              <li><code>gl_accounts.job_cost_eligible</code> gate</li>
+            </ul>
+          </div>
+          <div class="panel stack-sm">
+            <h3>Cross-cutting</h3>
+            <ul class="list-clean">
+              <li><code>notices</code> (avis)</li>
+              <li><code>documents</code> / object keys</li>
+              <li><code>audit_events</code></li>
+              <li><code>report_jobs</code> (PDF status)</li>
+            </ul>
+          </div>
+        </div>
+        <p class="callout" style="margin-top: 20px">
+          <strong>Migration strategy:</strong> dual-run period with ETL from company MDBs to Postgres, keyed by company + NOITEM.
+          Start with contracts + bids, then extras, then costs, then yard.
+        </p>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">API shape</p>
+        <h2>Example command / query split</h2>
+        <div class="panel panel-ink stack-md">
+          <h3>Commands (writes with ownership)</h3>
+          <p class="muted" style="margin: 0">
+            <code>POST /bids</code> - <code>POST /bids/:id/award</code> 
+            <code>POST /contracts/:id/extras</code> - <code>POST /extras/:id/approve</code> 
+            <code>POST /contracts/:id/cost-transactions</code> 
+            <code>POST /billing/invoices</code> 
+            <code>POST /pos/tickets/:id/complete</code> 
+            <code>POST /ap/receipts/:id/complete</code> (may emit JobCost transfer)
+          </p>
+          <h3>Queries (safe cross-module reads)</h3>
+          <p class="muted" style="margin: 0">
+            <code>GET /contracts/:id/dashboard</code> 
+            aggregates bid status, open extras $, live costs, WIP, billed to date, open POs 
+            without letting UI write across boundaries.
+          </p>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">Enforcing rules in code</p>
+        <h2>Business logic as services</h2>
+        <div class="steps">
+          <article class="step">
+            <div>
+              <h3>AwardService</h3>
+              <p>Rejects if bid already linked; allocates number series; creates contract; emits <code>ContractAwarded</code>.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>ExtraApprovalService</h3>
+              <p>Updates flags; letter generation can flip Approuv&eacute; / Rappel; locks baseline amount rules.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>BudgetSyncService</h3>
+              <p>On extras-session close: sum A/B rows, then upsert budgets (sign convention). Idempotent.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>JobCostTransferService</h3>
+              <p>Only if G/L job-cost eligible; set provenance module; A/R path requires confirmation flag.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>InvoiceService</h3>
+              <p>Sole creator of progressive invoices. Extra reprint endpoints are read-only against existing invoices.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div>
+              <h3>WipService</h3>
+              <p>Period snapshots; never callable from yard domain.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow">Frontend IA</p>
+        <h2>Next.js app structure (proposed)</h2>
+        <div class="panel">
+          <pre style="margin: 0; overflow: auto; font-size: 13px; line-height: 1.5; font-family: ui-monospace, Consolas, monospace">apps/web/                 # Next.js
+  app/(auth)/login
+  app/(app)/
+    layout.tsx            # company switcher, nav by role
+    contracts/[id]/      # shared contract shell
+      overview/
+      bids/               # if linked
+      office/             # docs, dessins, parties
+      extras/
+      costs/
+      billing/
+      yard/               # job-tagged ops
+    bids/
+    yard/pos/
+    admin/
+packages/api/             # Node domain API
+packages/domain/          # shared types + zod schemas
+packages/db/              # Prisma schema + migrations
+workers/                  # PDF, ETL, payroll import</pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">Architecture deep dive - MEI Bureau Cloud</div>
+    </footer>
+    <div class="presenter-bar" data-presenter>
+      <button type="button" data-prev>Prev</button>
+      <button type="button" data-next>Next</button>
+      <button type="button" data-reset>Top</button>
+    </div>
+    <script src="assets/app.js"></script>
+  </body>
+</html>
