@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Architecture - MEI Bureau Cloud</title>
+    <title>Business logic - MEI Bureau Cloud</title>
     <link rel="stylesheet" href="assets/styles.css" />
   </head>
   <body>
@@ -12,171 +12,103 @@
         <div class="brand-mark">MEI</div>
         <div>
           <span>MEI Bureau Cloud</span>
-          <small>Architecture</small>
+          <small data-i18n="brand.sub">Business logic</small>
         </div>
       </a>
-      <button class="nav-toggle" type="button" data-nav-toggle>Menu</button>
-      <ul class="nav-links" data-nav-links>
-        <li><a href="index.html" aria-current="page">Architecture</a></li>
-      </ul>
+      <div class="nav-end">
+        <div class="lang-switch" role="group" data-lang-switch aria-label="Language">
+          <button type="button" data-set-lang="en" aria-pressed="true" title="English">EN</button>
+          <button type="button" data-set-lang="fr" aria-pressed="false" title="Fran&ccedil;ais (Qu&eacute;bec)">FR</button>
+        </div>
+        <button class="nav-toggle" type="button" data-nav-toggle data-i18n="nav.menu">Menu</button>
+        <ul class="nav-links" data-nav-links>
+          <li><a href="index.html" aria-current="page" data-i18n="nav.business">Business logic</a></li>
+        </ul>
+      </div>
     </header>
 
     <main>
       <section class="section wrap" data-slide>
-        <p class="eyebrow">Technical solution</p>
-        <h1>Next.js + Node.js cloud architecture</h1>
-        <p class="lede">
-          One product, modular domains, API-first backend, cloud-ready database 
-          mapped 1:1 to the office ownership rules from the business logic pack.
+        <p class="eyebrow" data-i18n="hero.eyebrow">For the client</p>
+        <h1 data-i18n="hero.title">Business logic of the unified office</h1>
+        <p class="lede" data-i18n="hero.lede">
+          Plain-language rules of how construction work moves from bid to closed contract 
+          who owns each step, what must never be duplicated, and what the new software must guarantee.
         </p>
       </section>
 
-      <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">Stack</p>
-        <h2>Recommended technology choices</h2>
-        <div class="grid-3" style="margin-top: 20px">
-          <article class="panel stack-sm">
-            <span class="chip chip-teal">Frontend</span>
-            <h3>Next.js (App Router)</h3>
-            <p class="muted">Role-based UI, server components for lists/reports, client islands for POS / dense forms. TypeScript throughout.</p>
-          </article>
-          <article class="panel stack-sm">
-            <span class="chip chip-teal">Backend</span>
-            <h3>Node.js API</h3>
-            <p class="muted">Dedicated NestJS or Fastify service (or Next Route Handlers early, extract when domains grow). Domain modules mirror office desks.</p>
-          </article>
-          <article class="panel stack-sm">
-            <span class="chip chip-teal">Data</span>
-            <h3>PostgreSQL</h3>
-            <p class="muted">Replace Access MDBs. Prisma or Drizzle ORM. Multi-company via tenant / company id. Object storage for dossiers &amp; PDFs.</p>
-          </article>
-        </div>
-        <div class="grid-3" style="margin-top: 16px">
-          <article class="panel stack-sm">
-            <h3>Auth</h3>
-            <p class="muted">OIDC / Auth.js or Clerk/WorkOS. Company membership, role permissions per module (replacing CONFIG.MDB users).</p>
-          </article>
-          <article class="panel stack-sm">
-            <h3>Jobs &amp; reports</h3>
-            <p class="muted">Queue (BullMQ / SQS) for payroll import, budget sync, PDF generation. PDF engine replaces Crystal staging.</p>
-          </article>
-          <article class="panel stack-sm">
-            <h3>Hosting</h3>
-            <p class="muted">Vercel or container for Next; API + workers on containers (ECS/Cloud Run); managed Postgres; S3-compatible files.</p>
-          </article>
+      <section class="section-tight wrap reveal" data-slide>
+        <div class="callout" data-i18n="idea.body" data-i18n-html>
+          <strong>Central idea:</strong> the <em>projet / contrat</em> number is the single hub.
+          Bids become contracts only through award. Everything else - extras, costs, stock charges,
+          invoices - hangs off that number.
         </div>
       </section>
 
       <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">System view</p>
-        <h2>Logical architecture</h2>
-        <div class="arch-layers" style="margin-top: 20px">
-          <div class="layer">
-            <div class="layer-head">
-              <h3>Presentation - Next.js</h3>
-              <span class="chip">Web</span>
-            </div>
-            <p class="muted" style="margin: 0">
-              Apps shells: Bids - Project office - Change orders - Cost control - Billing - Yard &amp; counter - Admin.
-              Shared contract header on every job-scoped screen.
-            </p>
-          </div>
-          <div class="layer">
-            <div class="layer-head">
-              <h3>API gateway / BFF</h3>
-              <span class="chip">Node</span>
-            </div>
-            <p class="muted" style="margin: 0">
-              Auth session, company context, DTOs for UI. Aggregates read models (contract dashboard) without breaking write ownership.
-            </p>
-          </div>
-          <div class="layer">
-            <div class="layer-head">
-              <h3>Domain services</h3>
-              <span class="chip">Bounded contexts</span>
-            </div>
-            <p class="muted" style="margin: 0">
-              <code>bidding</code> - <code>contracts</code> - <code>change-orders</code> - <code>job-cost</code> - <code>billing</code> 
-              <code>inventory-pos</code> - <code>purchasing</code> - <code>ar-ap</code> - <code>notifications</code> - <code>documents</code>
-            </p>
-          </div>
-          <div class="layer">
-            <div class="layer-head">
-              <h3>Integration bus</h3>
-              <span class="chip">Events</span>
-            </div>
-            <p class="muted" style="margin: 0">
-              Domain events: <code>ContractAwarded</code>, <code>ExtraApproved</code>, <code>BudgetSyncRequested</code>,
-              <code>JobCostLinesPosted</code>, <code>InvoiceCreated</code>. Workers enforce hand-offs asynchronously when needed.
-            </p>
-          </div>
-          <div class="layer">
-            <div class="layer-head">
-              <h3>Persistence</h3>
-              <span class="chip">Postgres + files</span>
-            </div>
-            <p class="muted" style="margin: 0">
-              Relational tables replace JCPROJET / JCTRANS / FACTURATION / CR / CP / POS MDBs. Files for estimate dossiers &amp; generated PDFs.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">Domain map</p>
-        <h2>Modules and legacy ownership</h2>
+        <p class="eyebrow" data-i18n="roles.eyebrow">Roles that stay</p>
+        <h2 data-i18n="roles.title">Who does what in the office</h2>
+        <p class="muted" style="margin-bottom: 20px" data-i18n="roles.intro">
+          We keep the desks. We stop shipping four separate applications.
+        </p>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>MEI domain</th>
-                <th>Replaces</th>
-                <th>Key aggregates</th>
-                <th>Writes</th>
+                <th data-i18n="roles.h.concern">Concern</th>
+                <th data-i18n="roles.h.today">Today (legacy)</th>
+                <th data-i18n="roles.h.module">MEI module</th>
+                <th data-i18n="roles.h.owns">Owns</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>bidding</strong></td>
-                <td>GProjet soumission</td>
-                <td>Bid, CompetitorPrice, EstimateFolder</td>
-                <td>Bids only</td>
+                <td data-i18n="roles.r1.concern">Bid before award</td>
+                <td data-i18n="roles.r1.today">GProjet</td>
+                <td data-i18n="roles.r1.module">Bids &amp; contracts</td>
+                <td data-i18n="roles.r1.owns" data-i18n-html>Soumission <code>Syy###</code></td>
               </tr>
               <tr>
-                <td><strong>contracts</strong></td>
-                <td>GProjet award + projet hub</td>
-                <td>Contract, Party, Phase</td>
-                <td>Award creates contract; others read</td>
+                <td data-i18n="roles.r2.concern">Award &rarr; create contrat</td>
+                <td data-i18n="roles.r2.today">GProjet transfert</td>
+                <td data-i18n="roles.r2.module">Bids &amp; contracts</td>
+                <td data-i18n="roles.r2.owns" data-i18n-html>Projet <code>0yy###</code> / <code>Cyy###</code></td>
               </tr>
               <tr>
-                <td><strong>project-office</strong></td>
-                <td>GProjet docs / dessins / strait</td>
-                <td>Document, Drawing, Subcontractor, Notice</td>
-                <td>Follow-up entities</td>
+                <td data-i18n="roles.r3.concern">Project office (docs, dessins, sous-trait, d&eacute;nonciation)</td>
+                <td data-i18n="roles.r3.today">GProjet</td>
+                <td data-i18n="roles.r3.module">Project office</td>
+                <td data-i18n="roles.r3.owns">Follow-up on contrat</td>
               </tr>
               <tr>
-                <td><strong>change-orders</strong></td>
-                <td>Extra6</td>
-                <td>Extra, ExtraFlag, Letter, Reminder</td>
-                <td>Extras + letter workflow</td>
+                <td data-i18n="roles.r4.concern">Change orders &amp; letters</td>
+                <td data-i18n="roles.r4.today">Extra6</td>
+                <td data-i18n="roles.r4.module">Change orders</td>
+                <td data-i18n="roles.r4.owns">Extras, approval, correspondence</td>
               </tr>
               <tr>
-                <td><strong>job-cost</strong></td>
-                <td>JobCost6</td>
-                <td>Budget, CostTransaction, WipSnapshot</td>
-                <td>Costs, WIP, archive</td>
+                <td data-i18n="roles.r5.concern">Budget from extras</td>
+                <td data-i18n="roles.r5.today">Extra6 ? JobCost</td>
+                <td data-i18n="roles.r5.module">Change orders ? Cost control</td>
+                <td data-i18n="roles.r5.owns">Pushes budget; cost module consumes</td>
               </tr>
               <tr>
-                <td><strong>billing</strong></td>
-                <td>Facturation Progressive</td>
-                <td>ProgressInvoice, InvoiceLine</td>
-                <td>Invoice creation</td>
+                <td data-i18n="roles.r6.concern">Live costs, WIP, profit</td>
+                <td data-i18n="roles.r6.today">JobCost6</td>
+                <td data-i18n="roles.r6.module">Cost control</td>
+                <td data-i18n="roles.r6.owns">Transactions, travaux en cours, reports</td>
               </tr>
               <tr>
-                <td><strong>yard</strong></td>
-                <td>PVConst</td>
-                <td>Sale, PO, Receipt, StockItem, AR/AP docs</td>
-                <td>Ops; emits cost feed events</td>
+                <td data-i18n="roles.r7.concern">Progressive invoice creation</td>
+                <td data-i18n="roles.r7.today">Facturation Progressive</td>
+                <td data-i18n="roles.r7.module">Billing service</td>
+                <td data-i18n="roles.r7.owns">Creates invoices / amounts billed</td>
+              </tr>
+              <tr>
+                <td data-i18n="roles.r8.concern">Counter, stock, purchasing, A/R - A/P</td>
+                <td data-i18n="roles.r8.today">PVConst</td>
+                <td data-i18n="roles.r8.module">Yard &amp; counter</td>
+                <td data-i18n="roles.r8.owns">Ops money that can feed job costs</td>
               </tr>
             </tbody>
           </table>
@@ -184,152 +116,263 @@
       </section>
 
       <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">Data model</p>
-        <h2>From Access MDBs to Postgres</h2>
+        <p class="eyebrow" data-i18n="life.eyebrow">Lifecycle steps</p>
+        <h2 data-i18n="life.title">What must happen - step by step</h2>
+        <div class="grid-2" style="margin-top: 8px">
+          <article class="panel stack-sm">
+            <span class="chip" data-i18n="p12.chip">Phase 1-2</span>
+            <h3 data-i18n="p12.title">Bid</h3>
+            <ol>
+              <li data-i18n="p12.li1">Create soumission with division, secteur, channel.</li>
+              <li data-i18n="p12.li2">Estimate (dossier / workbook).</li>
+              <li data-i18n="p12.li3">Enter our price ? list shows as &quot;closed&quot; for filtering.</li>
+            </ol>
+            <p class="muted" data-i18n="p12.rule" data-i18n-html><strong>Rule:</strong> a closed bid is still not a contract.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip" data-i18n="p3.chip">Phase 3</span>
+            <h3 data-i18n="p3.title">Award</h3>
+            <ol>
+              <li data-i18n="p3.li1">Authorized user runs Transfert en contrat.</li>
+              <li data-i18n="p3.li2">System allocates project number (residential vs commercial pattern).</li>
+              <li data-i18n="p3.li3">Copies parties / contacts; contrat becomes visible to all modules.</li>
+            </ol>
+            <p class="muted" data-i18n="p3.rule" data-i18n-html><strong>Rule:</strong> only award creates the shared hub.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip" data-i18n="p4.chip">Phase 4</span>
+            <h3 data-i18n="p4.title">Structure the job</h3>
+            <ol>
+              <li data-i18n="p4.li1">Open phases (if used).</li>
+              <li data-i18n="p4.li2">Set initial budget, holdback %, extras billing mode.</li>
+              <li data-i18n="p4.li3">Optional baseline &eacute;tapes from change-order module.</li>
+            </ol>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip" data-i18n="p5.chip">Phase 5</span>
+            <h3 data-i18n="p5.title">Execute (parallel)</h3>
+            <ol>
+              <li data-i18n="p5.li1" data-i18n-html><strong>Office:</strong> documents, drawings, subcontractors, notices.</li>
+              <li data-i18n="p5.li2" data-i18n-html><strong>Extras:</strong> submit ? accept $ ? approve ? letters ? budget push.</li>
+              <li data-i18n="p5.li3" data-i18n-html><strong>Yard:</strong> PO / receive / POS; transfer JobCost-flagged G/L lines.</li>
+              <li data-i18n="p5.li4" data-i18n-html><strong>Costing:</strong> post costs, import payroll, update WIP.</li>
+            </ol>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip" data-i18n="p6.chip">Phase 6</span>
+            <h3 data-i18n="p6.title">Bill</h3>
+            <ol>
+              <li data-i18n="p6.li1">Billing service creates progressive invoices.</li>
+              <li data-i18n="p6.li2">Cost control prints with retenue / companion documents.</li>
+              <li data-i18n="p6.li3">Change-order module reprints only if already billed; cannot delete billed extras.</li>
+            </ol>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip" data-i18n="p7.chip">Phase 7</span>
+            <h3 data-i18n="p7.title">Close</h3>
+            <ol>
+              <li data-i18n="p7.li1">Mark job finished (blocks new cost posting).</li>
+              <li data-i18n="p7.li2">Archive cost history.</li>
+              <li data-i18n="p7.li3">Produce profit / compliance letters as needed.</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow" data-i18n="extra.eyebrow">Change orders</p>
+        <h2 data-i18n="extra.title">Extra workflow the client will recognize</h2>
+        <p class="lede" style="margin-bottom: 24px" data-i18n="extra.lede">
+          Extras use parallel flags (not one status dropdown). Letters are not &quot;print only&quot; 
+          printing often commits workflow state.
+        </p>
+        <div class="flow-row" style="margin-bottom: 24px">
+          <span class="flow-pill" data-i18n="extra.pill1">Draft</span><span class="flow-join">&rarr;</span>
+          <span class="flow-pill" data-i18n="extra.pill2">Soumis</span><span class="flow-join">&rarr;</span>
+          <span class="flow-pill" data-i18n="extra.pill3">Accept $</span><span class="flow-join">&rarr;</span>
+          <span class="flow-pill accent" data-i18n="extra.pill4">Approuv&eacute;</span><span class="flow-join">&rarr;</span>
+          <span class="flow-pill" data-i18n="extra.pill5">Budget sync</span><span class="flow-join">&rarr;</span>
+          <span class="flow-pill" data-i18n="extra.pill6">Factur</span>
+        </div>
         <div class="grid-2">
-          <div class="panel stack-sm">
-            <h3>Hub</h3>
+          <div class="panel">
+            <h3 data-i18n="extra.flags.title">Flags that matter</h3>
             <ul class="list-clean">
-              <li><code>companies</code> (ex CONFIG multi-cie)</li>
-              <li><code>contracts</code> (ex PROJET / NOITEM)</li>
-              <li><code>bids</code> (ex SOUMISSION)</li>
-              <li><code>users</code> + <code>memberships</code> + <code>permissions</code></li>
+              <li data-i18n="extra.flags.1" data-i18n-html><strong>Soumis</strong> - submitted to client / engineer</li>
+              <li data-i18n="extra.flags.2" data-i18n-html><strong>Accept $</strong> - commercial dollar acceptance</li>
+              <li data-i18n="extra.flags.3" data-i18n-html><strong>Approuv&eacute;</strong> - internal approval of the change</li>
+              <li data-i18n="extra.flags.4" data-i18n-html><strong>Rappel</strong> - follow-up while waiting</li>
+              <li data-i18n="extra.flags.5" data-i18n-html><strong>Factur</strong> - billed (terminal for delete)</li>
             </ul>
           </div>
-          <div class="panel stack-sm">
-            <h3>Money &amp; cost</h3>
+          <div class="panel">
+            <h3 data-i18n="extra.money.title">Money hand-off to cost control</h3>
             <ul class="list-clean">
-              <li><code>budgets</code> (ex JCBUD)</li>
-              <li><code>cost_transactions</code> (ex JCJOB) + <code>cost_history</code></li>
-              <li><code>wip_snapshots</code> (ex JCPROF)</li>
-              <li><code>extras</code> + <code>progress_invoices</code></li>
-            </ul>
-          </div>
-          <div class="panel stack-sm">
-            <h3>Yard</h3>
-            <ul class="list-clean">
-              <li><code>items</code>, <code>stock_moves</code></li>
-              <li><code>purchase_orders</code>, <code>ap_invoices</code></li>
-              <li><code>pos_tickets</code>, <code>ar_invoices</code>, <code>receipts</code></li>
-              <li><code>gl_accounts.job_cost_eligible</code> gate</li>
-            </ul>
-          </div>
-          <div class="panel stack-sm">
-            <h3>Cross-cutting</h3>
-            <ul class="list-clean">
-              <li><code>notices</code> (avis)</li>
-              <li><code>documents</code> / object keys</li>
-              <li><code>audit_events</code></li>
-              <li><code>report_jobs</code> (PDF status)</li>
+              <li data-i18n="extra.money.1" data-i18n-html>Baseline &eacute;tapes (<code>CHANGE=A</code>) ? initial budget</li>
+              <li data-i18n="extra.money.2" data-i18n-html>Extras (<code>CHANGE=B</code>) ? budget ordre / changements</li>
+              <li data-i18n="extra.money.3">Sync typically when leaving the extras screen (batch of saves)</li>
+              <li data-i18n="extra.money.4">Amounts follow JobCost sign convention</li>
             </ul>
           </div>
         </div>
-        <p class="callout" style="margin-top: 20px">
-          <strong>Migration strategy:</strong> dual-run period with ETL from company MDBs to Postgres, keyed by company + NOITEM.
-          Start with contracts + bids, then extras, then costs, then yard.
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow" data-i18n="bound.eyebrow">Boundaries</p>
+        <h2 data-i18n="bound.title">Must-not rules (non-negotiable)</h2>
+        <p class="muted" style="margin-bottom: 20px" data-i18n="bound.intro">
+          These prevent double invoices, orphan costs, and conflicting &quot;source of truth&quot;.
+        </p>
+        <div class="grid-2">
+          <article class="panel stack-sm">
+            <span class="chip chip-warn" data-i18n="bound.chip">Must not</span>
+            <h3 data-i18n="bound.1.title">Change orders must not create invoices</h3>
+            <p class="muted" data-i18n="bound.1.body">Extras stage / reprint billed documents. Invoice creation belongs to the billing service.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip chip-warn" data-i18n="bound.chip">Must not</span>
+            <h3 data-i18n="bound.2.title">Yard / POS must not compute WIP or profit</h3>
+            <p class="muted" data-i18n="bound.2.body">Counter feeds cost lines when G/L is JobCost-flagged. Profitability stays in cost control.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip chip-warn" data-i18n="bound.chip">Must not</span>
+            <h3 data-i18n="bound.3.title">Bids module must not replace costing</h3>
+            <p class="muted" data-i18n="bound.3.body">Award creates the contrat and project office. Cost posting, WIP, and &eacute;tat des b&eacute;n&eacute;fices stay in cost control.</p>
+          </article>
+          <article class="panel stack-sm">
+            <span class="chip chip-warn" data-i18n="bound.chip">Must not</span>
+            <h3 data-i18n="bound.4.title">Cost control must not own change-order letters</h3>
+            <p class="muted" data-i18n="bound.4.body">It may see extras dollars and FactExtra modes. Formal correspondence &amp; approval live in change orders.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow" data-i18n="hand.eyebrow">Hand-offs</p>
+        <h2 data-i18n="hand.title">Critical business hand-offs to preserve</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="hand.h.from">From</th>
+                <th data-i18n="hand.h.to">To</th>
+                <th data-i18n="hand.h.when">When</th>
+                <th data-i18n="hand.h.what">What moves</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-i18n="hand.1.from">Bids (award)</td>
+                <td data-i18n="hand.1.to">Shared contrat</td>
+                <td data-i18n="hand.1.when">Transfert confirmed</td>
+                <td data-i18n="hand.1.what">Number, client, contacts, folders</td>
+              </tr>
+              <tr>
+                <td data-i18n="hand.2.from">Change orders</td>
+                <td data-i18n="hand.2.to">Cost budgets</td>
+                <td data-i18n="hand.2.when">Leave extras screen</td>
+                <td data-i18n="hand.2.what">Initial + ordre budget rows</td>
+              </tr>
+              <tr>
+                <td data-i18n="hand.3.from">Yard A/P receive</td>
+                <td data-i18n="hand.3.to">Job costs</td>
+                <td data-i18n="hand.3.when">Terminer (auto if flagged)</td>
+                <td data-i18n="hand.3.what">Cost lines, provenance PDV</td>
+              </tr>
+              <tr>
+                <td data-i18n="hand.4.from">Yard A/R distribution</td>
+                <td data-i18n="hand.4.to">Job costs</td>
+                <td data-i18n="hand.4.when">Clerk confirms modal</td>
+                <td data-i18n="hand.4.what">Cost / revenue lines, provenance CAR</td>
+              </tr>
+              <tr>
+                <td data-i18n="hand.5.from">Billing service</td>
+                <td data-i18n="hand.5.to">Print / reprint</td>
+                <td data-i18n="hand.5.when">Invoice created</td>
+                <td data-i18n="hand.5.what">Invoice list + amounts billed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section wrap reveal" data-slide>
+        <p class="eyebrow" data-i18n="vocab.eyebrow">Vocabulary</p>
+        <h2 data-i18n="vocab.title">Words that confuse - clarify for the client</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="vocab.h.word">Word</th>
+                <th data-i18n="vocab.h.bids">In bids</th>
+                <th data-i18n="vocab.h.extras">In change orders</th>
+                <th data-i18n="vocab.h.cost">In cost control</th>
+                <th data-i18n="vocab.h.yard">In yard</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Projet</strong></td>
+                <td data-i18n="vocab.projet.bids">Awarded contrat</td>
+                <td data-i18n="vocab.projet.extras">Same hub</td>
+                <td data-i18n="vocab.projet.cost">Same hub</td>
+                <td data-i18n="vocab.projet.yard">Same hub on sales / POs</td>
+              </tr>
+              <tr>
+                <td><strong>Soumission</strong></td>
+                <td data-i18n="vocab.soum.bids">Pre-award bid</td>
+                <td data-i18n="vocab.soum.extras">-</td>
+                <td data-i18n="vocab.soum.cost">-</td>
+                <td data-i18n="vocab.soum.yard" data-i18n-html>Quote on an <em>existing</em> projet ? PO</td>
+              </tr>
+              <tr>
+                <td><strong>Extra</strong></td>
+                <td data-i18n="vocab.extra.bids">Flag / amount</td>
+                <td data-i18n="vocab.extra.extras">Full change-order app</td>
+                <td data-i18n="vocab.extra.cost">FactExtra / budget changement</td>
+                <td data-i18n="vocab.extra.yard">-</td>
+              </tr>
+              <tr>
+                <td><strong>Avis</strong></td>
+                <td data-i18n="vocab.avis.bids">Bid / project notices</td>
+                <td data-i18n="vocab.avis.extras">Letter packs</td>
+                <td data-i18n="vocab.avis.cost">JC notices</td>
+                <td data-i18n="vocab.avis.yard">Suite pattern</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="callout" style="margin-top: 20px" data-i18n="vocab.decision" data-i18n-html>
+          <strong>Design decision:</strong> do not reuse one &quot;Soumission&quot; screen for both bid packages and yard quotes without renaming.
         </p>
       </section>
 
       <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">API shape</p>
-        <h2>Example command / query split</h2>
-        <div class="panel panel-ink stack-md">
-          <h3>Commands (writes with ownership)</h3>
-          <p class="muted" style="margin: 0">
-            <code>POST /bids</code> - <code>POST /bids/:id/award</code> 
-            <code>POST /contracts/:id/extras</code> - <code>POST /extras/:id/approve</code> 
-            <code>POST /contracts/:id/cost-transactions</code> 
-            <code>POST /billing/invoices</code> 
-            <code>POST /pos/tickets/:id/complete</code> 
-            <code>POST /ap/receipts/:id/complete</code> (may emit JobCost transfer)
-          </p>
-          <h3>Queries (safe cross-module reads)</h3>
-          <p class="muted" style="margin: 0">
-            <code>GET /contracts/:id/dashboard</code> 
-            aggregates bid status, open extras $, live costs, WIP, billed to date, open POs 
-            without letting UI write across boundaries.
-          </p>
-        </div>
-      </section>
-
-      <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">Enforcing rules in code</p>
-        <h2>Business logic as services</h2>
-        <div class="steps">
-          <article class="step">
-            <div>
-              <h3>AwardService</h3>
-              <p>Rejects if bid already linked; allocates number series; creates contract; emits <code>ContractAwarded</code>.</p>
-            </div>
-          </article>
-          <article class="step">
-            <div>
-              <h3>ExtraApprovalService</h3>
-              <p>Updates flags; letter generation can flip Approuv&eacute; / Rappel; locks baseline amount rules.</p>
-            </div>
-          </article>
-          <article class="step">
-            <div>
-              <h3>BudgetSyncService</h3>
-              <p>On extras-session close: sum A/B rows, then upsert budgets (sign convention). Idempotent.</p>
-            </div>
-          </article>
-          <article class="step">
-            <div>
-              <h3>JobCostTransferService</h3>
-              <p>Only if G/L job-cost eligible; set provenance module; A/R path requires confirmation flag.</p>
-            </div>
-          </article>
-          <article class="step">
-            <div>
-              <h3>InvoiceService</h3>
-              <p>Sole creator of progressive invoices. Extra reprint endpoints are read-only against existing invoices.</p>
-            </div>
-          </article>
-          <article class="step">
-            <div>
-              <h3>WipService</h3>
-              <p>Period snapshots; never callable from yard domain.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section wrap reveal" data-slide>
-        <p class="eyebrow">Frontend IA</p>
-        <h2>Next.js app structure (proposed)</h2>
+        <p class="eyebrow" data-i18n="path.eyebrow">Happy path</p>
+        <h2 data-i18n="path.title">Checklist the office already follows</h2>
         <div class="panel">
-          <pre style="margin: 0; overflow: auto; font-size: 13px; line-height: 1.5; font-family: ui-monospace, Consolas, monospace">apps/web/                 # Next.js
-  app/(auth)/login
-  app/(app)/
-    layout.tsx            # company switcher, nav by role
-    contracts/[id]/      # shared contract shell
-      overview/
-      bids/               # if linked
-      office/             # docs, dessins, parties
-      extras/
-      costs/
-      billing/
-      yard/               # job-tagged ops
-    bids/
-    yard/pos/
-    admin/
-packages/api/             # Node domain API
-packages/domain/          # shared types + zod schemas
-packages/db/              # Prisma schema + migrations
-workers/                  # PDF, ETL, payroll import</pre>
+          <ol class="stack-sm">
+            <li data-i18n="path.1" data-i18n-html>Estimator creates <strong>soumission</strong> and builds the estimate dossier.</li>
+            <li data-i18n="path.2" data-i18n-html>Bid is won ? <strong>Transfert en contrat</strong> creates the shared projet.</li>
+            <li data-i18n="path.3">Cost clerk opens the job: phases, budget, retenue, extras mode.</li>
+            <li data-i18n="path.4">During the job: PM records extras &amp; letters; purchasing / counter charges jobs; cost control posts remaining costs &amp; WIP.</li>
+            <li data-i18n="path.5">Accounting bills via progressive billing; cost control prints (retenue).</li>
+            <li data-i18n="path.6">Extras budget sync keeps change-order dollars in cost budgets.</li>
+            <li data-i18n="path.7">Job finishes ? termine / archive; profit letters as needed.</li>
+          </ol>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="wrap">Architecture deep dive - MEI Bureau Cloud</div>
+      <div class="wrap" data-i18n="footer">Business logic presentation - MEI Bureau Cloud</div>
     </footer>
     <div class="presenter-bar" data-presenter>
-      <button type="button" data-prev>Prev</button>
-      <button type="button" data-next>Next</button>
-      <button type="button" data-reset>Top</button>
+      <button type="button" data-prev data-i18n="present.prev">Prev</button>
+      <button type="button" data-next data-i18n="present.next">Next</button>
+      <button type="button" data-reset data-i18n="present.top">Top</button>
     </div>
     <script src="assets/app.js"></script>
+    <script src="assets/business-logic-i18n.js"></script>
   </body>
 </html>
